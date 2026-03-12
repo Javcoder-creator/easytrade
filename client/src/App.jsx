@@ -9,7 +9,8 @@ import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import POSPage from './pages/POSPage';
 import ProductsPage from './pages/ProductsPage';
-import SalesPage from './pages/SalesPage';
+
+import SalesPage from "./pages/SalesPage";
 import InventoryPage from './pages/InventoryPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
