@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-// Production: VITE_API_URL env dan oladi
+// Production (Render): VITE_API_URL = backend origin, /api/v1 qo‘shiladi
 // Development: /api/v1 (vite proxy orqali)
-const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+const origin = import.meta.env.VITE_API_URL;
+const BASE_URL = origin ? origin.replace(/\/$/, '') + '/api/v1' : '/api/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,

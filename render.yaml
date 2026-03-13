@@ -1,5 +1,5 @@
 # render.yaml — Render.com Blueprint
-# Bu fayl bilan 1 bosishda barcha servislar yaratiladi
+# Bu fayl bilan 1 bosishda barcha servislar yaratiladi.
 
 services:
   # ─── Backend API ───────────────────────────────────
@@ -27,14 +27,11 @@ services:
         value: 15m
       - key: JWT_REFRESH_EXPIRES_IN
         value: 7d
+      # CORS: frontend manzili. Deploy dan keyin Dashboard → easytrade-frontend → URL ni nusxalab shu yerga kiriting.
       - key: CLIENT_URL
-        fromService:
-          name: easytrade-frontend
-          type: web
-          property: host
-          envVarKey: RENDER_EXTERNAL_URL
+        sync: false
 
-  # ─── Frontend ──────────────────────────────────────
+  # ─── Frontend (static site) ─────────────────────────
   - type: web
     name: easytrade-frontend
     runtime: static
@@ -42,13 +39,14 @@ services:
     plan: free
     rootDir: client
     buildCommand: npm install && npm run build
+    # rootDir: client bo‘lganda path rootDir ga nisbatan
     staticPublishPath: dist
     envVars:
+      # Backend public URL — client build vaqtida /api/v1 qo‘shiladi (axios.js)
       - key: VITE_API_URL
         fromService:
           name: easytrade-backend
           type: web
-          property: host
           envVarKey: RENDER_EXTERNAL_URL
     routes:
       - type: rewrite

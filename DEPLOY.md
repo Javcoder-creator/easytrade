@@ -31,7 +31,7 @@ git push origin main
 1. [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint**.
 2. GitHub repozitoriyangizni ulang (EasyTrade).
 3. Render `render.yaml` ni topadi. **Apply** bosing.
-4. Region: **Frankfurt** (yoki o‘zingizga qulay). **Create resources** bosing.
+4. **CLIENT_URL** so‘raladi (sync: false) — avval **bo‘sh** qoldiring yoki keyinroq kiritasiz. **Create resources** bosing.
 
 Natija: 3 ta resurs yaratiladi:
 
@@ -39,24 +39,14 @@ Natija: 3 ta resurs yaratiladi:
 - **easytrade-backend** — Node.js server
 - **easytrade-frontend** — statik sayt (Vite build)
 
-### 3-qadam: Backend URL ni aniqlash
+### 3-qadam: CLIENT_URL ni backend da kiritish (CORS uchun)
 
-1. **Dashboard** → **easytrade-backend** → oching.
-2. Yuqorida ko‘rinadigan **URL** ni nusxalang, masalan:  
-   `https://easytrade-backend.onrender.com`
+1. **Dashboard** → **easytrade-frontend** → yuqoridagi **URL** ni nusxalang (masalan `https://easytrade-frontend.onrender.com`).
+2. **easytrade-backend** → **Environment** → **CLIENT_URL** qo‘shing yoki o‘zgartiring:
+   - **Value:** frontend URL (masalan `https://easytrade-frontend.onrender.com`).
+3. **Save** → kerak bo‘lsa **Manual Deploy**.
 
-### 4-qadam: Frontend da API manzilini sozlash
-
-Frontend build paytida `VITE_API_URL` kerak — backend manzili + `/api/v1`.
-
-1. **Dashboard** → **easytrade-frontend** → **Environment**.
-2. **VITE_API_URL** qo‘shing yoki o‘zgartiring:
-   - **Key:** `VITE_API_URL`
-   - **Value:** `https://easytrade-backend.onrender.com/api/v1`  
-   (o‘zingizning backend URL ingizni yozing, oxirida `/api/v1` bo‘lsin.)
-3. **Save** → **Manual Deploy** → **Deploy latest commit**.
-
-Bundan keyin frontend yangi API manziliga so‘rov yuboradi.
+**VITE_API_URL** Blueprint orqali avtomatik beriladi (backend URL); frontend build vaqtida `/api/v1` qo‘shiladi. Qo‘lda kiritish shart emas.
 
 ### 5-qadam: Backend birinchi ishga tushishi
 
@@ -70,6 +60,15 @@ Backend `start:prod` (scripts/start.sh) orqali avtomatik migratsiya va kerak bo�
 **easytrade-frontend** ning berilgan URL ini oching, masalan:  
 `https://easytrade-frontend.onrender.com`  
 — bu yerda ilova ishlashi kerak.
+
+---
+
+## Blueprint da muammo chiqsa
+
+- **"Validation error" / "could not be found"** — `render.yaml` sintaksisi tekshirildi; kodni yangilab `git push` qiling va Blueprint ni qayta **Apply** qiling.
+- **CLIENT_URL so‘raladi** — Blueprint da `sync: false` bo‘lgani uchun Render Dashboard da qiymat kiritishni so‘raydi. Birinchi marta bo‘sh qoldirib, resurslar yaratilgach **easytrade-backend** → **Environment** da **CLIENT_URL** = frontend URL (masalan `https://easytrade-frontend.onrender.com`) qiling.
+- **Frontend API ga ulanmayapti** — **easytrade-frontend** → **Environment** da **VITE_API_URL** bor-yo‘qligini tekshiring (Blueprint avtomatik beradi). Yo‘q bo‘lsa, **VITE_API_URL** = `https://easytrade-backend.onrender.com` qiling (oxirida `/api/v1` yozmaslik — kod avtomatik qo‘shadi). Keyin **Redeploy**.
+- **Backend "Application failed to respond"** — **Logs** da xatoni ko‘ring; odatda `DATABASE_URL` yoki migratsiya xatosi. **start:prod** bash skripti ishlashi uchun Render Linux muhitida bash mavjud.
 
 ---
 
