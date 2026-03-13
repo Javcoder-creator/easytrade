@@ -17,9 +17,9 @@ const PORT = process.env.PORT || 5000;
 // ─── Xavfsizlik ───────────────────────────────────────
 app.use(helmet());
 
-const allowedOrigins = process.env.CLIENT_URL
-  ? [process.env.CLIENT_URL]
-  : ['http://localhost:3000'];
+// CLIENT_URL yoki CLIENT_URLS (vergul bilan ajratilgan) — bitta yoki bir nechta manba
+const clientUrlRaw = process.env.CLIENT_URL || process.env.CLIENT_URLS || 'http://localhost:3000';
+const allowedOrigins = clientUrlRaw.split(',').map((s) => s.trim()).filter(Boolean);
 
 app.use(cors({
   origin: allowedOrigins,

@@ -2,20 +2,35 @@
 const { db } = require('../config/database');
 
 const Sale = {
-  // Yangi sotuv (tranzaksiya ichida)
+  // Yangi sotuv (tranzaksiya ichida, ombor qoldig'i FOR UPDATE bilan qat'iy tekshiriladi)
   async create({ customer_id, user_id, warehouse_id = 1, items, discount = 0, payment_method = 'cash' }) {
     return db.transaction(async (trx) => {
-      // 1. Umumiy summani hisoblash
+      // 1. Har bir tovar uchun ombor qoldig'ini bloklab tekshirish (race condition oldini olish)
+      for (const item of items) {
+        const row = await trx('stock')
+          .where({ product_id: item.product_id, warehouse_id })
+          .forUpdate()
+          .first('quantity');
+        if (!row || Number(row.quantity) < item.quantity) {
+          const prod = await trx('products').where({ id: item.product_id }).first('name');
+          const name = prod?.name || `ID ${item.product_id}`;
+          const err = new Error(`"${name}" omborda yetarli emas. So'ralgan: ${item.quantity}, mavjud: ${row ? row.quantity : 0}`);
+          err.statusCode = 400;
+          throw err;
+        }
+      }
+
+      // 2. Umumiy summani hisoblash
       const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const grandTotal = total - discount;
 
-      // 2. Sotuv hujjatini yaratish
+      // 3. Sotuv hujjatini yaratish
       const [sale] = await trx('sales').insert({
         customer_id, user_id, warehouse_id,
         total: grandTotal, discount, payment_method, status: 'completed',
       }).returning('*');
 
-      // 3. Sotuv elementlarini qo'shish
+      // 4. Sotuv elementlarini qo'shish
       const saleItems = items.map(item => ({
         sale_id: sale.id,
         product_id: item.product_id,
@@ -25,14 +40,14 @@ const Sale = {
       }));
       await trx('sale_items').insert(saleItems);
 
-      // 4. Ombor qoldiqlarini kamaytirish
+      // 5. Ombor qoldiqlarini kamaytirish (yuqorida tekshirilgan)
       for (const item of items) {
         await trx('stock')
           .where({ product_id: item.product_id, warehouse_id })
           .decrement('quantity', item.quantity);
       }
 
-      // 5. Mijoz balansini yangilash (agar mijoz tanlangan bo'lsa)
+      // 6. Mijoz balansini yangilash (agar mijoz tanlangan bo'lsa)
       if (customer_id) {
         await trx('customers')
           .where({ id: customer_id })

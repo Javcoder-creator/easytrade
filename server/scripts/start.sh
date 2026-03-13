@@ -14,7 +14,7 @@ db('users').count('id as c').first().then(r => {
     const seed = require('./database/seeds/seed.js');
     setTimeout(() => db.destroy(), 5000);
   } else {
-    console.log('Ma lumotlar bor, seed o tkazib yuborildi');
+    console.log('Ma\'lumotlar bor, seed o\'tkazib yuborildi');
     db.destroy();
   }
 }).catch(() => db.destroy());

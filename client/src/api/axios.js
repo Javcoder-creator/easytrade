@@ -21,15 +21,28 @@ api.interceptors.response.use(
     const original = err.config;
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true;
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+        return Promise.reject(err);
+      }
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
         const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken });
         localStorage.setItem('accessToken', data.data.accessToken);
         original.headers.Authorization = `Bearer ${data.data.accessToken}`;
         return api(original);
-      } catch {
-        localStorage.clear();
+      } catch (refreshErr) {
+        const status = refreshErr.response?.status;
+        const msg = refreshErr.response?.data?.message || refreshErr.message;
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Token yangilash muvaffaqiyatsiz:', status, msg);
+        }
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         window.location.href = '/login';
+        return Promise.reject(refreshErr);
       }
     }
     return Promise.reject(err);

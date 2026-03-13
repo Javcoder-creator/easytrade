@@ -1,6 +1,5 @@
-// src/config/database.js
+// src/config/database.js — dotenv app.js da chaqiriladi
 const knex = require('knex');
-require('dotenv').config();
 
 // Render.com DATABASE_URL ni qo'llab-quvvatlash
 const connection = process.env.DATABASE_URL

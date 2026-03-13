@@ -21,8 +21,10 @@ const create = async (req, res) => {
 
     return success(res, sale, 'Sotuv muvaffaqiyatli amalga oshirildi', 201);
   } catch (err) {
-    console.error('Sotuv xato:', err);
-    return error(res, 'Sotuvda xato yuz berdi: ' + err.message, 500);
+    const code = err.statusCode || 500;
+    const msg = code === 400 ? err.message : 'Sotuvda xato yuz berdi: ' + err.message;
+    if (code >= 500) console.error('Sotuv xato:', err);
+    return error(res, msg, code);
   }
 };
 

@@ -32,7 +32,9 @@ const authSlice = createSlice({
   reducers: {
     logout(state) {
       state.user = null;
-      localStorage.clear();
+      // Faqat auth bilan bog'liq kalitlarni tozalash (boshqa localStorage ma'lumotlari saqlanadi)
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
     },
     clearError(state) { state.error = null; },
     setInitialized(state) { state.initialized = true; },
