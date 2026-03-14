@@ -3,7 +3,7 @@
 
 services:
   # ─── Backend API ───────────────────────────────────
-  - type: web
+  - type: static
     name: easytrade-backend
     runtime: node
     region: frankfurt
@@ -32,9 +32,9 @@ services:
         sync: false
 
   # ─── Frontend (static site) ─────────────────────────
-  - type: web
+  - type: static
     name: easytrade-frontend
-    runtime: static
+    runtime: node
     
     plan: free
     rootDir: client
