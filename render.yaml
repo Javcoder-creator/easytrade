@@ -35,7 +35,7 @@ services:
   - type: web
     name: easytrade-frontend
     runtime: static
-    region: frankfurt
+    
     plan: free
     rootDir: client
     buildCommand: npm install && npm run build

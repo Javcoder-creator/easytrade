@@ -11,6 +11,46 @@ Bu qo‘llanmada loyihani **Render.com** da bepul (free tier) deploy qilish ketm
 
 ---
 
+## Blueprint sahifasida repo ko‘rinmasa
+
+Render Blueprint ochganda kerakli GitHub repozitoriyangiz ro‘yxatda bo‘lmasa, quyidagilarni tekshiring:
+
+### 1. GitHub ulanganligini tekshiring
+
+1. [Render Dashboard](https://dashboard.render.com) → **Account Settings** (o‘ng pastdagi profil ikonkasi).
+2. **Connect** / **Integrations** yoki **GitHub** bo‘limiga kiring.
+3. **GitHub** ulangan bo‘lishi kerak. Agar "Connect GitHub" ko‘rsa — ulang va **barcha repozitoriyalarga** yoki kamida **EasyTrade** repoga ruxsat bering.
+
+### 2. Repo ruxsatini yangilang
+
+- GitHub’da Render’ga berilgan ruxsat **faqat tanlangan repolar** bo‘lsa, EasyTrade repozitoriyangizni tanlanganlar ro‘yxatiga qo‘shing.
+- Buni qilish: **GitHub.com** → **Settings** → **Applications** → **Authorized OAuth Apps** → **Render** → **Configure** → **Repository access** da **EasyTrade** reponi tanlang yoki **All repositories** ni belgilang.
+
+### 3. Blueprint’ni to‘g‘ridan-to‘g‘ri repo orqali ochish
+
+1. **Dashboard** → **New** → **Web Service** (yoki **Static Site**) bosing.
+2. **Build and deploy from a Git repository** da **Connect GitHub** (yoki **Configure GitHub**) orqali repozitoriyalarni yangilang.
+3. Kerakli repo (EasyTrade) paydo bo‘lsa, **Cancel** qilib chiqing.
+4. Endi **New** → **Blueprint** qiling — repo odatda ro‘yxatda chiqadi.
+
+### 4. Repo GitHub’da borligiga ishonch hosil qiling
+
+- Loyiha **faqat kompyuteringizda** bo‘lib, GitHub’ga push qilinmagan bo‘lishi mumkin. Terminalda:
+  ```bash
+  cd c:\Users\Javohir\OneDrive\Desktop\easytrade
+  git remote -v
+  git push origin main
+  ```
+- `git remote -v` da GitHub manzili ko‘rinishi, `git push` esa xatosiz bajarilishi kerak. Shundan keyin Render’da repo ko‘rinadi.
+
+### 5. Boshqa brauzer yoki incognito
+
+- Boshqa GitHub hisobi bilan kirilgan bo‘lishi mumkin. Render’dan chiqib, to‘g‘ri GitHub hisobi bilan qayta **Sign in with GitHub** qiling yoki brauzer cache’ini tozalab urinib ko‘ring.
+
+Agar reponingiz **organization** (tashkilot) ostida bo‘lsa, Render’ga shu organization’dan repo’larga ruxsat berilganligini tekshiring (GitHub organization settings).
+
+---
+
 ## Usul 1: Render Blueprint (render.yaml) orqali — tavsiya etiladi
 
 Loyiha ildizida `render.yaml` fayli bor. U **bitta marta** barcha servislarni (baza, backend, frontend) yaratadi.
